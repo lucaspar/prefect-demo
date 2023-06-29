@@ -1,18 +1,139 @@
+[project]
+    authors         = [{ name = "Lucas Parzianello", email = "lucaspar@users.noreply.github.com" }]
+    dependencies    = ["loguru>=0.7.2", "polars>=1.6.0", "rich>=13.8.0", "prefect>=2.20.3"]
+    name            = "prefect-demo"
+    readme          = "README.md"
+    requires-python = ">=3.12"
+    version         = "0.1.0"
+
 [tool.poetry]
-name = "prefect-demo"
-version = "0.1.0"
-description = ""
-authors = ["Lucas Parzianello <lucaspar@users.noreply.github.com>"]
-readme = "README.md"
-packages = [{include = "prefect_demo"}]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-prefect = "^2.10.17"
-polars = "^0.18.4"
-rich = "^13.4.2"
+    authors      = ["Lucas Parzianello"]
+    description  = "A demo for Prefect: data pipeline automation tool"
+    name         = "prefect-demo"
+    package-mode = false
+    version      = "0.1.0"
 
+    [tool.poetry.dependencies]
+        loguru  = "^0.7.0"
+        polars  = "^0.18.4"
+        prefect = "^2.10.17"
+        python  = "^3.12"
+        rich    = "^13.4.2"
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.uv]
+    dev-dependencies = ["ruff>=0.6.2"]
+
+[tool.ruff]
+
+    # See https://github.com/astral-sh/ruff/blob/main/docs/configuration.md
+    # Rule lists pycodestyle (`E`) and Pyflakes (`F`) are enabled by default.
+    # More rule lists: https://docs.astral.sh/ruff/rules/
+    lint.select = [
+
+        # core rule lists (defaults):
+        "E", # pycodestyle: https://www.flake8rules.com/#pycodestyle
+        "F", # pyflakes: https://www.flake8rules.com/#pyflakes
+
+        # lists with mostly automatically fixable rules:
+        "B",    # bugbear: https://github.com/PyCQA/flake8-bugbear#list-of-warnings
+        "C4",   # flake8-comprehensions: https://pypi.org/project/flake8-comprehensions
+        "EM",   # flake8-errmsg: https://pypi.org/project/flake8-eradicate
+        "FURB", # refurb modernizes code: https://pypi.org/project/refurb
+        "I",    # isort sorts imports: https://docs.astral.sh/ruff/rules/#isort-i
+        "Q",    # quotes: https://docs.astral.sh/ruff/rules/#flake8-quotes-q
+        "SIM",  # flake8-simplify: https://pypi.org/project/flake8-simplify
+        "TCH",  # flake8-type-checking (type checking imports): https://pypi.org/project/flake8-type-checking
+        "UP",   # pyupgrade upgrades python syntax: https://pypi.org/project/pyupgrade
+
+        # other nice-to-have lists:
+        "ARG", # flake8-unused-arguments: https://pypi.org/project/flake8-unused-arguments
+        "BLE", # flake8-blind-except: https://docs.astral.sh/ruff/rules/#flake8-blind-except-ble
+        "COM", # flake8-commas for trailing commas: https://pypi.org/project/flake8-commas
+        "EXE", # flake8-executable for shebangs: https://docs.astral.sh/ruff/rules/#flake8-executable-exe
+        "PIE", # flake8-pie: https://pypi.org/project/flake8-pie
+        "PL",  # pylint rules implemented by ruff https://docs.astral.sh/ruff/rules/#pylint-pl
+        "PT",  # flake8-pytest style: https://docs.astral.sh/ruff/rules/#flake8-pytest-style-pt
+        "PTH", # flake8-pathlib instead: https://docs.astral.sh/ruff/rules/#flake8-use-pathlib-pth
+        "PYI", # flake8-pyi: https://pypi.org/project/flake8-pyi/
+        "RET", # flake8-returns: https://docs.astral.sh/ruff/rules/#flake8-return-ret
+        "RSE", # flake8-raise: https://docs.astral.sh/ruff/rules/#flake8-raise-rse
+        "RUF", # ruff-specific rules: https://docs.astral.sh/ruff/rules/#ruff-specific-rules-ruf
+
+        # lists with more manual fixes:
+        "ASYNC", # flake8-async: https://pypi.org/project/flake8-async/
+        "PERF",  # perflint for performance anti-patterns: https://pypi.org/project/perflint/
+        "TRY",   # tryceratops to prevent exception antipatterns: https://pypi.org/project/tryceratops/
+        "DOC",   # pydoclint for docs to match signatures: https://pypi.org/project/pydoclint/
+        # "D",   # pydocstyle: https://docs.astral.sh/ruff/rules/#pydocstyle-d
+
+        # package-specific rules:
+        "PD",  # pandas-vet: https://pypi.org/project/pandas-vet/
+        "NPY", # numpy-specific rules: https://docs.astral.sh/ruff/rules/#numpy-specific-rules-npy
+
+        # enables all rules:
+        # "ALL",
+
+    ]
+
+    # consider ignoring inline `# noqa` comments before disabling a rule entirely e.g.:
+    #   x = 1  # noqa: F841
+    lint.ignore = [
+        # "E501", # line too long
+    ]
+
+    # allow autofix for all enabled rules (when `--fix`) is provided.
+    lint.fixable   = ["ALL"]
+    lint.unfixable = []
+
+    # per-file-ignores = {
+    #         "__init__.py": [
+    # "E402" # module level import not at top of file
+    #             ],
+    #     }
+
+    # exclude a variety of commonly ignored directories.
+    exclude = [
+        "__pypackages__",
+        "_build",
+        ".bzr",
+        ".direnv",
+        ".eggs",
+        ".git-rewrite",
+        ".git",
+        ".hg",
+        ".mypy_cache",
+        ".nox",
+        ".pants.d",
+        ".pytype",
+        ".ruff_cache",
+        ".svn",
+        ".tox",
+        ".venv",
+        "buck-out",
+        "build",
+        "dist",
+        "migrations",
+        "node_modules",
+        "venv",
+    ]
+    # same as Black's default
+    line-length = 88
+
+    # allow unused variables when underscore-prefixed.
+    lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+    target-version          = "py312"
+
+    # sorting imports
+    fix = true
+    src = [".", "src"]
+
+    [tool.ruff.lint.isort]
+        # https://docs.astral.sh/ruff/settings/#lintisort
+        # known-first-party = ["my_module1", "my_module2"]
+
+[tool.isort]
+
+    # See https://pycqa.github.io/isort/docs/configuration/options.html
+    # Profiles: https://pycqa.github.io/isort/docs/configuration/profiles.html
+    profile = "black"
