@@ -1,12 +1,16 @@
 """Example of an ETL job to be run with Prefect."""
 import os
+import random
 
+import loguru
 import polars as pl
 import prefect
 from rich import traceback
 
 # better stacktrace printing
 traceback.install()
+log = loguru.logger
+flow_name = "cup-of-mud"
 
 
 @prefect.task
@@ -97,17 +101,65 @@ def load(df_coffee: pl.DataFrame, path: str) -> None:
     df_coffee.write_parquet(path)
 
 
-@prefect.flow
+def flow_failure_handler(flow: prefect.Flow, flow_run, state: prefect.State):
+    """Define a failure handler for the flow."""
+    log.info("All retries have failed! Here's the state:")
+    log.info(
+        f" ❌ Run of Flow '{flow.name}' failed w/ state {state.name}: {state.message}"
+        + f" with run time of {flow_run.estimated_run_time}."
+    )
+
+
+def flow_completion_handler(flow: prefect.Flow, flow_run, state: prefect.State):
+    """Define a completion handler for the flow."""
+    log.info(
+        f" ✅ Run of Flow '{flow.name}' completed w/ state {state.name}: {state.message}"
+        + f" with run time of {flow_run.estimated_run_time}."
+    )
+
+
+def flow_cancel_handler(flow: prefect.Flow, flow_run, state: prefect.State):
+    """Define a cancel handler for the flow."""
+    log.info(
+        f" ⚠️ Run of Flow '{flow.name}' completed w/ state {state.name}: {state.message}"
+        + f" with run time of {flow_run.estimated_run_time}."
+    )
+    # clean up assets here
+
+
+def flow_crash_handler(flow: prefect.Flow, flow_run, state: prefect.State):
+    """Define a crash handler for the flow."""
+    log.info(
+        f" ☠️ Run of Flow '{flow.name}' completed w/ state {state.name}: {state.message}"
+        + f" with run time of {flow_run.estimated_run_time}."
+    )
+
+
+@prefect.flow(
+    name=flow_name,
+    on_failure=[flow_failure_handler],
+    on_completion=[flow_completion_handler],
+    on_cancellation=[flow_cancel_handler],
+    on_crashed=[flow_crash_handler],
+    retries=3,
+    retry_delay_seconds=2,
+    log_prints=True,
+)
 def etl_flow(input_file: str, output_file: str):
     """Defines an ETL flow to demo Prefect."""
     df_coffee = extract(input_file)
     df_coffee = transform(df_coffee)
+    # simulate a stochastic failure
+    if random.random() < 0.5:
+        raise ValueError(
+            "❌ Task failed successfully! 👍 |"
+            + "This tests the retries and failure handler."
+        )
     load(df_coffee, path=output_file)
 
 
 def main():
     """Define a Prefect flow."""
-    flow_name = "cup-of-mud"
     dir_data = os.path.abspath("./data")
     csv_input = "df_arabica_clean.csv"
     input_file = os.path.join(dir_data, csv_input)
