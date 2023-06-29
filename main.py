@@ -65,7 +65,6 @@ def extract(path: str) -> pl.DataFrame:
 def transform(df_coffee: pl.DataFrame):
     """Correlates the total production weight with the moisture percentage."""
     # use kg as the normalized unit and convert the column to float
-    # bag_wgt_normalized = df_coffee["Bag Weight"].str.replace(" kg", "").dtype(pl.Float64)
     df_coffee = df_coffee.with_columns(
         pl.col("Bag Weight")
         .str.replace(" kg", "")
