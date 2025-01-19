@@ -160,7 +160,7 @@ def etl_flow(input_file: Path, output_file: Path) -> None:
     load(df_coffee, path=output_file)
 
 
-def main():
+def main() -> None:
     """Define a Prefect flow."""
     dir_data = Path("./data").resolve()
     csv_input = "df_arabica_clean.csv"
